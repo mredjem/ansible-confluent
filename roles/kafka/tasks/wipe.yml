@@ -1,0 +1,19 @@
+---
+# Cleanup installation
+
+# Stop Kafka container
+- name: Stop container
+  docker_container:
+    name: "{{ kafka_name }}"
+    keep_volumes: no
+    state: absent
+
+# Remove created directories
+- name: Remove directories
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ kafka_conf_dir }}"
+    - "{{ kafka_logs_dir }}"
+    - "{{ kafka_data_dirs }}"

@@ -1,0 +1,31 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.ssh.insert_key = false
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 2048
+    v.cpus = 2
+  end
+
+  # create zookeeper server
+  config.vm.define "zookeeper" do |zookeeper|
+    zookeeper.vm.box = "genebean/centos-7-docker-ce"
+    zookeeper.vm.hostname = "zookeeper"
+    zookeeper.vm.network "private_network", ip: "192.168.50.12"
+  end
+
+  # create kafka backend
+  config.vm.define "kafka" do |kafka|
+    kafka.vm.box = "genebean/centos-7-docker-ce"
+    kafka.vm.hostname = "kafka"
+    kafka.vm.network "private_network", ip: "192.168.50.13"
+    tools.vm.provision "ansible" do |ansible|
+      ansible.compatibility_mode = "2.0"
+      ansible.playbook = "playbooks/deploy-kafka.yml"
+      ansible.inventory_path = "./local_inventory/hosts"
+      ansible.limit = "all"
+      ansible.extra_vars = { ansible_python_interpreter: "/usr/bin/python2" }
+    end
+  end
+end

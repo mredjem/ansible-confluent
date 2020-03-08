@@ -1,0 +1,35 @@
+---
+# Configure Kafka Broker
+
+# Create required directories
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+    mode: 0755
+  with_items:
+    - "{{ kafka_conf_dir }}"
+    - "{{ kafka_logs_dir }}"
+    - "{{ kafka_data_dirs }}"
+
+# Copy the configuration file
+- name: Copy configuration file
+  template:
+    src: "server.properties.j2"
+    dest: "{{ kafka_conf_dir }}/server.properties"
+    mode: 0644
+
+# Copy the log4j.properties
+- name: Copy the log4j.properties file
+  template:
+    src: "log4j.properties.j2"
+    dest: "{{ kafka_conf_dir }}/log4j.properties"
+    mode: 0644
+
+# Copy the tools-log4j.properties
+- name: Copy the tools-log4j.properties file
+  template:
+    src: "tools-log4j.properties.j2"
+    dest: "{{ kafka_conf_dir }}/tools-log4j.properties"
+    mode: 0644

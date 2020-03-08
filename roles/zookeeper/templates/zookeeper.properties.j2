@@ -1,0 +1,49 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# the directory where the snapshot is stored.
+dataDir=/var/lib/zookeeper/data
+
+# the port at which the clients will connect
+clientPort=2181
+
+# the length of a tick in milliseconds
+tickTime={{ zk_tickTime }}
+
+# the timeout, specified in number of ticks, for a follower to initially connect to a leader
+initLimit={{ zk_initLimit }}
+
+# the timeout, specified in number of ticks, for a follower to sync with a leader
+syncLimit={{ zk_syncLimit }}
+
+# the number of snaphshots and corresponding transaction logs to retain when purging data
+autopurge.snapRetainCount={{ zk_autopurge_snapRetainCount }}
+
+# the number of hours to wait between garbage collecting old snapshots and logs
+autopurge.purgeInterval={{ zk_autopurge_purgeInterval }}
+
+# disable the per-ip limit on the number of connections since this is a non-production config
+maxClientCnxns={{ zk_maxClientCnxns }}
+
+{% if zk_servers | length > 1 %}
+# a list of Zookeeper servers identified by their id
+{% for server in zk_servers %}
+{% if inventory_hostname == server %}
+server.{{ hostvars[server].zk_server_id }}=0.0.0.0:{{ zk_transaction_port }}:{{ zk_leader_election_port }}
+{% else %}
+server.{{ hostvars[server].zk_server_id }}={{ server }}:{{ zk_transaction_port }}:{{ zk_leader_election_port }}
+{% endif %}
+{% endfor %}
+{% endif %}

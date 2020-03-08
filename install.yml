@@ -1,0 +1,12 @@
+---
+- name: Install Zookeeper
+  hosts: zookeeper
+  become: yes
+  roles:
+    - { name: zookeeper, tags: ["zookeeper"] }
+
+- name: Install Kafka
+  hosts: kafka
+  become: yes
+  roles:
+    - { name: kafka, tags: ["kafka"] }

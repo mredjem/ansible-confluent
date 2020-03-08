@@ -1,0 +1,10 @@
+---
+
+- name: include prepare.yml
+  import_tasks: prepare.yml
+
+- name: include configure.yml
+  import_tasks: configure.yml
+
+- name: include start.yml
+  import_tasks: start.yml

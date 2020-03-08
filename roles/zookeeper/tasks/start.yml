@@ -1,0 +1,21 @@
+---
+
+- name: Create Zookeeper container
+  docker_container:
+    name: "{{ zk_name }}"
+    image: "{{ zk_namespace }}/cp-zookeeper:{{ zk_version }}"
+    restart: yes
+    restart_policy: unless-stopped
+    published_ports:
+      - "{{ zk_client_port }}:2181"
+      - "{{ zk_transaction_port }}:{{ zk_transaction_port }}"
+      - "{{ zk_leader_election_port }}:{{ zk_leader_election_port }}"
+    volumes:
+      - "{{ zk_conf_dir }}:/etc/kafka"
+      - "{{ zk_logs_dir }}:/var/log/kafka"
+      - "{{ zk_data_dir }}:/var/lib/zookeeper/data"
+    entrypoint: zookeeper-server-start /etc/kafka/zookeeper.properties
+
+- name: Wait for Zookeeper
+  wait_for:
+    port: "{{ zk_client_port }}"

@@ -1,0 +1,29 @@
+---
+
+- set_fact:
+    kafka_miscellaneous_volumes:
+      - "{{ kafka_conf_dir }}:/etc/kafka"
+      - "{{ kafka_logs_dir }}:/var/log/kafka"
+
+- set_fact:
+    kafka_data_volumes: "{{ kafka_data_dirs | map('regex_replace', '^(.*)(\\d+)(.*)$', '\\1\\2\\3:' ~ kafka_log_dirs ~ '/\\2') | list }}"
+
+- name: Create Kafka container
+  docker_container:
+    name: "{{ kafka_name }}"
+    image: "{{ kafka_namespace }}/cp-kafka:{{ kafka_version }}"
+    restart: yes
+    restart_policy: unless-stopped
+    env:
+      KAFKA_HEAP_OPTS: "-Xms{{ kafka_heap_space }} -Xmx{{ kafka_heap_space }}"
+      KAFKA_JMX_OPTS: "{{ kafka_jmx_opts | join(' ') }}"
+    published_ports:
+      - "{{ kafka_broker_port }}:9092"
+      - "{{ kafka_jmx_port }}:{{ kafka_jmx_port }}"
+    volumes: "{{ kafka_miscellaneous_volumes + kafka_data_volumes }}"
+    entrypoint: kafka-server-start /etc/kafka/server.properties
+
+- name: Wait for Kafka
+  wait_for:
+    port: "{{ kafka_broker_port }}"
+    delay: 10

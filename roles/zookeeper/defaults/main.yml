@@ -1,0 +1,33 @@
+---
+
+# [Docker]
+zk_name: "zookeeper"
+zk_version: "5.4.0"
+zk_namespace: "confluentinc"
+
+# [Volumes]
+zk_conf_dir: "/etc/zookeeper"
+zk_logs_dir: "/var/log/zookeeper"
+zk_data_dir: "/var/lib/data/zookeeper"
+
+# [Ports]
+zk_client_port: 2181
+zk_transaction_port: 2888
+zk_leader_election_port: 3888
+
+# [Zookeeper]
+zk_server_id: 1
+zk_tickTime: 2000
+zk_initLimit: 5
+zk_syncLimit: 2
+zk_autopurge_snapRetainCount: 3
+zk_autopurge_purgeInterval: 5
+zk_maxClientCnxns: 10
+zk_servers: "{{ groups['zookeeper'] | map('extract', hostvars, ['inventory_hostname']) | list }}"
+
+# [Logging]
+zk_rootLogger_level: INFO
+zk_tools_rootLogger_level: WARN
+zk_logs_max_backup: 10
+zk_logs_max_file_size: 1MB
+zk_logs_pattern: "[%d{yyyy-MM-dd'T'HH:mm:ss.SSS}] %p %c [%t] %m%n"

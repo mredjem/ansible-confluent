@@ -1,0 +1,16 @@
+log4j.rootLogger={{ zk_rootLogger_level }}, stdout, zookeeperAppender
+
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern={{ zk_logs_pattern }}
+
+log4j.appender.zookeeperAppender=org.apache.log4j.RollingFileAppender
+log4j.appender.zookeeperAppender.DatePattern='.'yyyy-MM-dd
+log4j.appender.zookeeperAppender.File=/var/log/kafka/server.log
+log4j.appender.zookeeperAppender.layout=org.apache.log4j.PatternLayout
+log4j.appender.zookeeperAppender.layout.ConversionPattern={{ zk_logs_pattern }}
+
+log4j.appender.zookeeperAppender.MaxFileSize={{ zk_logs_max_file_size }}
+log4j.appender.zookeeperAppender.MaxBackupIndex={{ zk_logs_max_backup }}
+
+log4j.additivity.state.change.logger=false

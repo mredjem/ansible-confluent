@@ -1,0 +1,36 @@
+---
+# Customize hardware settings
+- name: "Ample virtual memory available for mmapped files (vm.max_map_count={{ kafka_max_map_count }})"
+  sysctl:
+    name: vm.max_map_count
+    value: "{{ kafka_max_map_count | int }}"
+    ignoreerrors: yes
+    state: present
+
+- name: "Prevent swapping if not emergency memory situation (vm.swappiness={{ kafka_swappiness }})"
+  sysctl:
+    name: vm.swappiness
+    value: "{{ kafka_swappiness | int }}"
+    ignoreerrors: yes
+    state: present
+
+- name: "Increase the frequency of non-blocking background flushes (vm.dirty_background_ratio={{ kafka_dirty_background_ratio }})"
+  sysctl:
+    name: vm.dirty_background_ratio
+    value: "{{ kafka_dirty_background_ratio | int }}"
+    ignoreerrors: yes
+    state: present
+
+- name: "Decrease the frequency of blocking flushes (vm.dirty_ratio={{ kafka_dirty_ratio }})"
+  sysctl:
+    name: vm.dirty_ratio
+    value: "{{ kafka_dirty_ratio | int }}"
+    ignoreerrors: yes
+    state: present
+
+- name: "Increase number of file descriptors allowed per process (nofile={{ kafka_max_open_files }})"
+  pam_limits:
+    domain: "*"
+    limit_type: '-'
+    limit_item: nofile
+    value: "{{ kafka_max_open_files | int }}"

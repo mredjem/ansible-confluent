@@ -1,0 +1,74 @@
+---
+
+# [Docker]
+kafka_name: "kafka"
+kafka_version: "5.4.0"
+kafka_namespace: "confluentinc"
+
+# [Volumes]
+kafka_conf_dir: "/etc/kafka"
+kafka_logs_dir: "/var/log/kafka"
+kafka_data_dirs: []
+
+# [Ports]
+kafka_broker_port: 9092
+zk_client_port: 2181
+kafka_jmx_port: 9999
+
+# [Kafka]
+kafka_broker_id: 1
+kafka_broker_rack: ""
+kafka_log_dirs: "/var/lib/kafka/data"
+kafka_advertised_listeners: "PLAINTEXT://{{ inventory_hostname }}:{{ kafka_broker_port }}"
+kafka_zookeeper_connect: "{{ groups['zookeeper'] | map('extract', hostvars, ['inventory_hostname']) | join(':' ~ zk_client_port ~ ',') }}:{{ zk_client_port }}"
+kafka_num_partitions: "{{ groups['kafka'] | length | int }}"
+kafka_default_replication_factor: "{{ groups['kafka'] | length | int }}"
+kafka_offsets_topic_replication_factor: 1
+kafka_unclean_leader_election_enable: false
+kafka_min_insync_replicas: 1
+kafka_replica_fetch_min_bytes: 1
+kafka_replica_fetch_mait_max_ms: 500
+kafka_auto_create_topics_enable: false
+kafka_delete_topics_enable: false
+kafka_log_retention_hours: 168
+kafka_log_retention_bytes: -1
+kafka_message_max_bytes: 1000012
+kafka_offsets_retention_minutes: 10080
+kafka_max_connections_per_ip: 100
+
+# [JVM]
+kafka_heap_space: 4g
+
+# [JMX]
+kafka_jmx_opts:
+  - "-Dcom.sun.management.jmxremote"
+  - "-Dcom.sun.management.jmxremote.authenticate=false"
+  - "-Dcom.sun.management.jmxremote.ssl=false"
+  - "-Dcom.sun.management.jmxremote.local.only=false"
+  - "-Dcom.sun.management.jmxremote.port={{ kafka_jmx_port }}"
+  - "-Dcom.sun.management.jmxremote.rmi.port={{ kafka_jmx_port }}"
+  - "-Djava.rmi.server.hostname={{ inventory_hostname }}"
+
+# [Limits]
+kafka_dirty_background_ratio: 5
+kafka_dirty_ratio: 60
+kafka_max_open_files: 65536
+kafka_max_map_count: 262144
+kafka_swappiness: 1
+
+# [Logging]
+kafka_rootLogger_level: INFO
+kafka_tools_rootLogger_level: WARN
+kafka_logger_org_I0Itec_zkclient_ZkClient_level: INFO
+kafka_logger_org_apache_zookeeper_level: INFO
+kafka_logger_kafka_level: WARN
+kafka_logger_org_apache_kafka_level: WARN
+kafka_logger_request_level: WARN
+kafka_logger_network_RequestChannel_level: WARN
+kafka_logger_controller_level: INFO
+kafka_logger_log_LogCleaner_level: WARN
+kafka_logger_state_change_level: WARN
+kafka_logger_authorizer_level: INFO
+kafka_logs_max_backup: 10
+kafka_logs_max_file_size: 1MB
+kafka_logs_pattern: "[%d{yyyy-MM-dd'T'HH:mm:ss.SSS}] %p %c [%t] %m%n"

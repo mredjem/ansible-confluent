@@ -1,0 +1,25 @@
+---
+- hosts: all
+  tasks:
+    - pause:
+        prompt: "All containers and data will be removed. Press Enter to continue or Ctrl+c then 'a' to abort."
+
+- name: Wipe Kafka
+  hosts: kafka
+  become: yes
+  tasks:
+    - include_role:
+        name: kafka
+        tasks_from: wipe
+  tags:
+    - kafka
+
+- name: Wipe Zookeeper
+  hosts: zookeeper
+  become: yes
+  tasks:
+    - include_role:
+        name: zookeeper
+        tasks_from: wipe
+  tags:
+    - zookeeper

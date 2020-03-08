@@ -1,0 +1,17 @@
+---
+- import_playbook: install-prerequisites.yml
+
+- hosts: zookeeper
+  become: yes
+  roles:
+    - ../../roles/zookeeper
+
+- hosts: kafka
+  become: yes
+  roles:
+    - ../../roles/kafka
+  vars:
+    kafka_heap_space: 1g
+
+- name: Check Kafka health
+  import_playbook: ../testcases/010_check-kafka-health.yml

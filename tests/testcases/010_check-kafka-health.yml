@@ -1,0 +1,20 @@
+---
+- hosts: "192.168.50.13"
+  become: yes
+  tasks:
+    - name: Wait for Kafka to start
+      pause:
+        seconds: 5
+
+    - name: List Kafka topics
+      command: docker exec -ti kafka bash -c "KAFKA_JMX_OPTS= kafka-topics --zookeeper 192.168.50.12:2181 --list"
+      register: kafka_topics
+
+    - name: Output Kafka topics list
+      debug:
+        msg: "{{ kafka_topics }}"
+
+    - name: Check Kafka topics list is not empty
+      fail:
+        msg: Kafka cluster is down
+      when: kafka_topics.stdout_lines | length == 0

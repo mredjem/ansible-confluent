@@ -1,0 +1,5 @@
+[zookeeper]
+192.168.50.12 zk_server_id=1
+
+[kafka]
+192.168.50.13 kafka_broker_id=1

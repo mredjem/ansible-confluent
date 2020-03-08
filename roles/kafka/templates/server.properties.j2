@@ -1,0 +1,73 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# see kafka.server.KafkaConfig for additional details and defaults
+
+############################# Server Basics #############################
+
+broker.id={{ kafka_broker_id  }}
+broker.id.generation.enable=false
+
+broker.rack={{ kafka_broker_rack }}
+
+{% if kafka_data_dirs | length == 0 %}
+log.dirs={{ kafka_log_dirs }}
+{% else %}
+log.dirs={{ kafka_data_dirs | map('regex_replace', '^(.*)(\\d+)(.*)$', kafka_log_dirs ~ '/\\2') | list | join(',') }}
+{% endif %}
+
+############################# Socket Server Settings #############################
+
+advertised.listeners={{ kafka_advertised_listeners }}
+
+max.connections.per.ip={{ kafka_max_connections_per_ip }}
+
+############################# Log Basics #############################
+
+compression.type=producer
+message.max.bytes={{ kafka_message_max_bytes }}
+
+num.partitions={{ kafka_num_partitions }}
+default.replication.factor={{ kafka_default_replication_factor }}
+unclean.leader.election.enable={{ kafka_unclean_leader_election_enable }}
+
+############################# Internal Topic Settings  #############################
+
+offsets.retention.minutes={{ kafka_offsets_retention_minutes }}
+offsets.topic.replication.factor={{ kafka_offsets_topic_replication_factor }}
+
+auto.create.topics.enable={{ kafka_auto_create_topics_enable }}
+delete.topics.enable={{ kafka_delete_topics_enable }}
+
+############################# Log Retention Policy #############################
+
+log.cleanup.policy=delete
+log.retention.hours={{ kafka_log_retention_hours }}
+log.retention.bytes={{ kafka_log_retention_bytes }}
+
+############################# Log Replication Policy #############################
+
+min.insync.replicas={{ kafka_min_insync_replicas }}
+
+replica.fetch.min.bytes={{ kafka_replica_fetch_min_bytes }}
+replica.fetch.wait.max.ms={{ kafka_replica_fetch_mait_max_ms }}
+
+############################# Zookeeper #############################
+
+zookeeper.connect={{ kafka_zookeeper_connect }}
+
+##################### Confluent Proactive Support ######################
+
+confluent.support.metrics.enable=false

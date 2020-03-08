@@ -1,0 +1,42 @@
+---
+# Configure Zookeeper Server
+
+# Create required directories
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+    mode: 0755
+  with_items:
+    - "{{ zk_conf_dir }}"
+    - "{{ zk_logs_dir }}"
+    - "{{ zk_data_dir }}"
+
+# Copy the configuration file
+- name: Copy configuration file
+  template:
+    src: "zookeeper.properties.j2"
+    dest: "{{ zk_conf_dir }}/zookeeper.properties"
+    mode: 0644
+
+# Copy the log4j.properties
+- name: Copy the log4j.properties file
+  template:
+    src: "log4j.properties.j2"
+    dest: "{{ zk_conf_dir }}/log4j.properties"
+    mode: 0644
+
+# Copy the tools-log4j.properties
+- name: Copy the tools-log4j.properties file
+  template:
+    src: "tools-log4j.properties.j2"
+    dest: "{{ zk_conf_dir }}/tools-log4j.properties"
+    mode: 0644
+
+# Copy the myid
+- name: Copy the myid file
+  template:
+    src: "myid.j2"
+    dest: "{{ zk_data_dir }}/myid"
+    mode: 0644
